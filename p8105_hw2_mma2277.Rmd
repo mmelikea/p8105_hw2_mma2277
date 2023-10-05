@@ -1,7 +1,8 @@
 ---
 title: "Homework 2"
 author: "Melike Aksoy"
-date: 2023-09-23
+uni: "mma2277"
+date: 2023-10-04
 output: github_document
 ---
 
@@ -115,106 +116,56 @@ over the same time period in which a republican was president was 6.47.
 
 #### Importing, Cleaning, and Organize the Mr.Trash Wheel Data
 
-##### Firstly selecting the excel sheet that we will use and then skipping the first row because it contains figures
 
 ```{r, message=FALSE}
 mrtrashwheel_data = read_excel("/Users/muazzezaksoy/Desktop/p8105_hw2_mma2277/data/202309 Trash Wheel Collection Data.xlsx", 
-  sheet = 1,
-  skip = 1, 
+  sheet = 1, ##### Selecting the second excel sheet that we will use 
+  skip = 1,  ##### Skipping the first row because it contains figures
   ) |>
   janitor::clean_names() |>
-  mutate(Trash_Wheel = "Mr")
+  drop_na() |>  ##### Omitting rows that do not include dumpster-specific data using drop_na                  function
+  mutate(Trash_Wheel = "Mr") |> ##### creating a new variable for identification
+  select(- year)|>  ##### Removing the year column because it year column include non-data    
+  select(- x15, - x16) |> #### Removing the columns x15 and x16
+  select(Trash_Wheel, everything()) #### Reorganizing columns to join datasets later                                            (putting  identifier variable as first column)
+   
 ```
 
 
-##### Removing the year column because it year column include non-data entries(columns with notes)
-
-```{r, message=FALSE}
-mrtrashwheel_data = select(mrtrashwheel_data, - year)
-```
-
-
-##### Removing the columns R created when we used skip function for row 1 (`...15` and `...16`) 
-
-```{r, message=FALSE}
-mrtrashwheel_data = select(mrtrashwheel_data, - x15, - x16)
-```
-
-##### Omitting rows that do not include dumpster-specific data using drop_na function
-```{r,message=FALSE}
-mrtrashwheel_data= drop_na(mrtrashwheel_data)
-```
-
-#### Reorganizing columns to join datasets later
-
-```{r}
-mrtrashwheel_data =select(mrtrashwheel_data, date, Trash_Wheel, everything())
-```
-
+#### Creating homes_powered variable
+mrtrashwheel_data = mrtrashwheel_data |> 
+  mutate(homes_powered = (weight_tons*500)/30)
 
 
 #### Importing, Cleaning, and Organize Professor Trash Wheel data
 
-##### Selecting the second excel sheet that we will use and then skipping the first row because it contains figures
 ```{r, message=FALSE}
 proftrashwheel_data = read_excel("/Users/muazzezaksoy/Desktop/p8105_hw2_mma2277/data/202309 Trash Wheel Collection Data.xlsx", 
-  sheet = 2,
-  skip = 1, 
+  sheet = 2,    ##### Selecting the second excel sheet that we will use 
+  skip = 1,     ##### Skipping the first row because it contains figures
   ) |>
   janitor::clean_names() |>
-  mutate(Trash_Wheel = "Professor")
+  drop_na() |>  ##### Omitting rows that do not include dumpster-specific data using drop_na                  function
+  mutate(Trash_Wheel = "Professor") |> ##### creating a new variable for identification
+  select(Trash_Wheel, everything()) |> ##### Reorganizing columns to join datasets later
+  select(- year)  ##### Removing the year column because it year column include non-data                         entries(columns with notes)
 ```
-
-
-
-##### Omitting rows that do not include dumpster-specific data using drop_na function
-```{r,message=FALSE}
-proftrashwheel_data= drop_na(proftrashwheel_data)
-```
-
-#### Reorganizing columns to join datasets later
-
-```{r}
-proftrashwheel_data =select(proftrashwheel_data, date, Trash_Wheel, everything())
-```
-
-##### Removing the year column
-
-```{r, message=FALSE}
-proftrashwheel_data =select(proftrashwheel_data, - year)
-```
-
-
 
 
 #### Importing, Cleaning, and Organize Professor Trash Wheel data
 
-##### Selecting the fourth excel sheet that we will use and then skipping the first row because it contains a figure
 
 ```{r, message=FALSE}
 Gwynnda_data = read_excel("/Users/muazzezaksoy/Desktop/p8105_hw2_mma2277/data/202309 Trash Wheel Collection Data.xlsx", 
-  sheet = 4,
-  skip = 1, 
+  sheet = 4, ##### Selecting the second excel sheet that we will use 
+  skip = 1, ##### Skipping the first row because it contains figures
   )|>
   janitor::clean_names() |>
-  mutate(Trash_Wheel = "Gwynnda")
-```
+  drop_na()|> ##### Omitting rows that do not include dumpster-specific data using drop_na                  function  
+  select(- year) |> ##### Removing the year column
+  mutate(Trash_Wheel = "Gwynnda") |> ##### Creating a new variable for identification
+  select(Trash_Wheel, everything())  #### Reorganizing columns to join datasets later
 
-##### Omitting rows that do not include dumpster-specific data using drop_na function
-```{r,message=FALSE}
-Gwynnda_data= drop_na(Gwynnda_data)
-```
-
-#### Reorganizing columns to join datasets later
-
-```{r}
-Gwynnda_data =select(Gwynnda_data, Trash_Wheel, everything())
-```
-
-##### Removing the year column
-
-```{r, message=FALSE}
-Gwynnda_data =select(Gwynnda_data, - year)
 ```
 
 
@@ -222,20 +173,13 @@ Gwynnda_data =select(Gwynnda_data, - year)
 
 ```{r}
 tidy_trashwheel_data = 
-  left_join(mrtrashwheel_data, proftrashwheel_data, by = "Trash_Wheel")
-
-tidy_trashwheel_data_final = 
-  left_join(tidy_trashwheel_data, Gwynnda_data, by = "Trash_Wheel")
-
+  bind_rows(mrtrashwheel_data, proftrashwheel_data, Gwynnda_data)
 
 ```
 
+### Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
 
 
-
-
-
-
-
+## I wrote it but it did not run
 
 
