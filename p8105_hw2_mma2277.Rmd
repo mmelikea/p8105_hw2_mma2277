@@ -205,6 +205,22 @@ MCI_amyloid_data = read_csv(file = "/Users/muazzezaksoy/Desktop/p8105_hw2_mma227
 ```
 
 
+#### Joining datasets (MCI_baseline_data, MCI_amyloid_data)
+
+```{r}
+MCI_combined= 
+  inner_join(MCI_baseline_data, MCI_amyloid_data, by = "id")
+```
+
+#### Converting from WIDE TO LONG FORMAT
+
+```{r}
+MCI_combined_long = MCI_combined |> 
+  pivot_longer(cols = starts_with("time_"),  # Specifying the columns to pivot
+               names_to = "Times",            # Name of the new variable for column names
+               values_to = "Biomarker")          # Name of the new variable for biomarker
+```
+
 
 
 
