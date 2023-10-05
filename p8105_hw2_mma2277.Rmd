@@ -180,6 +180,31 @@ tidy_trashwheel_data =
 ### Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
 
 
-## I wrote it but it did not run
+
+# Problem 3
+
+#### Importing, Cleaning, and Organizing MCI baseline data
+
+```{r}
+MCI_baseline_data = read_csv(file = "/Users/muazzezaksoy/Desktop/p8105_hw2_mma2277/data/data_mci/MCI_baseline.csv",
+  skip=1) |>
+  janitor::clean_names() |>
+  mutate(sex = ifelse(sex == 1, "Male", "Female"),
+        apoe4 = ifelse(apoe4 == 1, "Carrier", "Non-carrier") ) 
+  
+  tibble(MCI_baseline_data)
+```
+
+
+##### Importing, Cleaning, and Organizing MCI baseline data
+```{r}
+MCI_amyloid_data = read_csv(file = "/Users/muazzezaksoy/Desktop/p8105_hw2_mma2277/data/data_mci/MCI_amyloid.csv",
+  skip=1) |>
+  janitor::clean_names() |>
+  rename(id=study_id)
+```
+
+
+
 
 
