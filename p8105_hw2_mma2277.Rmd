@@ -112,6 +112,7 @@ over the same time period in which a republican was president was 6.47.
 
 ## Problem 2
 
+
 #### Importing, Cleaning, and Organize the Mr.Trash Wheel Data
 
 ##### Firstly selecting the excel sheet that we will use and then skipping the first row because it contains figures
@@ -121,22 +122,35 @@ mrtrashwheel_data = read_excel("/Users/muazzezaksoy/Desktop/p8105_hw2_mma2277/da
   sheet = 1,
   skip = 1, 
   ) |>
-  mutate(trash_wheel = "Mr")
+  janitor::clean_names() |>
+  mutate(Trash_Wheel = "Mr")
 ```
 
 
 ##### Removing the year column because it year column include non-data entries(columns with notes)
 
 ```{r, message=FALSE}
-mrtrashwheel_data = select(mrtrashwheel_data, - Year)
+mrtrashwheel_data = select(mrtrashwheel_data, - year)
 ```
 
 
 ##### Removing the columns R created when we used skip function for row 1 (`...15` and `...16`) 
 
 ```{r, message=FALSE}
-mrtrashwheel_data = select(mrtrashwheel_data, -...15, -...16)
+mrtrashwheel_data = select(mrtrashwheel_data, - x15, - x16)
 ```
+
+##### Omitting rows that do not include dumpster-specific data using drop_na function
+```{r,message=FALSE}
+mrtrashwheel_data= drop_na(mrtrashwheel_data)
+```
+
+#### Reorganizing columns to join datasets later
+
+```{r}
+mrtrashwheel_data =select(mrtrashwheel_data, date, Trash_Wheel, everything())
+```
+
 
 
 #### Importing, Cleaning, and Organize Professor Trash Wheel data
@@ -148,13 +162,28 @@ proftrashwheel_data = read_excel("/Users/muazzezaksoy/Desktop/p8105_hw2_mma2277/
   skip = 1, 
   ) |>
   janitor::clean_names() |>
-  mutate(trash_wheel = "Professor")
+  mutate(Trash_Wheel = "Professor")
 ```
+
+
 
 ##### Omitting rows that do not include dumpster-specific data using drop_na function
 ```{r,message=FALSE}
 proftrashwheel_data= drop_na(proftrashwheel_data)
 ```
+
+#### Reorganizing columns to join datasets later
+
+```{r}
+proftrashwheel_data =select(proftrashwheel_data, date, Trash_Wheel, everything())
+```
+
+##### Removing the year column
+
+```{r, message=FALSE}
+proftrashwheel_data =select(proftrashwheel_data, - year)
+```
+
 
 
 
@@ -168,13 +197,39 @@ Gwynnda_data = read_excel("/Users/muazzezaksoy/Desktop/p8105_hw2_mma2277/data/20
   skip = 1, 
   )|>
   janitor::clean_names() |>
-  mutate(trash_wheel = "Gwynnda")
+  mutate(Trash_Wheel = "Gwynnda")
 ```
 
 ##### Omitting rows that do not include dumpster-specific data using drop_na function
 ```{r,message=FALSE}
 Gwynnda_data= drop_na(Gwynnda_data)
 ```
+
+#### Reorganizing columns to join datasets later
+
+```{r}
+Gwynnda_data =select(Gwynnda_data, Trash_Wheel, everything())
+```
+
+##### Removing the year column
+
+```{r, message=FALSE}
+Gwynnda_data =select(Gwynnda_data, - year)
+```
+
+
+#### Joining datasets( Mr. Trash Wheel, Professor Trash Wheel, and Gwynnda)
+
+```{r}
+tidy_trashwheel_data = 
+  left_join(mrtrashwheel_data, proftrashwheel_data, by = "Trash_Wheel")
+
+tidy_trashwheel_data_final = 
+  left_join(tidy_trashwheel_data, Gwynnda_data, by = "Trash_Wheel")
+
+
+```
+
 
 
 
